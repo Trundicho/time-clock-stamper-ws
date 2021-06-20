@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.trundicho.timeclockstamper.service.TimeClockStamperService;
 
 @RestController
+@RequestMapping(value = "stamp")
 public class TimeClockStamperController {
 
     private final TimeClockStamperService timeClockStamperService;
@@ -17,22 +18,22 @@ public class TimeClockStamperController {
         this.timeClockStamperService = timeClockStamperService;
     }
 
-    @RequestMapping(value = "/stamp/inOrOut", method = RequestMethod.POST, produces = "text/plain")
+    @RequestMapping(value = "inOrOut", method = RequestMethod.POST, produces = "text/plain")
     public String stampInOrOut() {
         return timeClockStamperService.stampInOrOut();
     }
 
-    @RequestMapping(value = "/stamp/current/state", method = RequestMethod.GET, produces = "text/plain")
+    @RequestMapping(value = "state", method = RequestMethod.GET, produces = "text/plain")
     public String currentStampState() {
         return timeClockStamperService.currentStampState();
     }
 
-    @RequestMapping(value = "/stamp/worked/today", method = RequestMethod.GET, produces = "text/plain")
+    @RequestMapping(value = "worked/today", method = RequestMethod.GET, produces = "text/plain")
     public String hoursWorkedToday() {
         return timeClockStamperService.hoursWorkedToday();
     }
 
-    @RequestMapping(value = "/stamp/overtime/month", method = RequestMethod.GET, produces = "text/plain")
+    @RequestMapping(value = "overtime/month", method = RequestMethod.GET, produces = "text/plain")
     public String overtimeMonth() {
         return timeClockStamperService.overtimeMonth();
     }

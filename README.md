@@ -2,6 +2,8 @@
 is a simple webservice that lets you stamp in and stamp out. It gives you an overview 
 about your overtime per month.
 
+![Screenshot](API.png)
+
 ### Prerequisites
 - Java 11 JDK
 - A JAVA IDE
