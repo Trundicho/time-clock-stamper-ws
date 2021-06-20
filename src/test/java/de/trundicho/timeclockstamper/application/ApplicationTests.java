@@ -17,12 +17,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class ClockInAndOutApplicationTests {
+class ApplicationTests {
 
     @Value("${persistence.file}")
     private String persistenceFile;
     @Autowired
-    ClockInAndOutController clockInAndOutController;
+    TimeClockStamperController timeClockStamperController;
 
     @BeforeEach
     void setup() throws IOException {
@@ -31,13 +31,13 @@ class ClockInAndOutApplicationTests {
 
     @Test
     void whenClockingInOrOut_thenStateChanges() {
-        assertThat(clockInAndOutController.currentClockState()).isEqualTo("CLOCK_OUT");
-        clockInAndOutController.clockInOrOut();
-        assertThat(clockInAndOutController.currentClockState()).isEqualTo("CLOCK_IN");
-        clockInAndOutController.clockInOrOut();
-        assertThat(clockInAndOutController.currentClockState()).isEqualTo("CLOCK_OUT");
-        clockInAndOutController.clockInOrOut();
-        assertThat(clockInAndOutController.currentClockState()).isEqualTo("CLOCK_IN");
+        assertThat(timeClockStamperController.currentStampState()).isEqualTo("CLOCK_OUT");
+        timeClockStamperController.stampInOrOut();
+        assertThat(timeClockStamperController.currentStampState()).isEqualTo("CLOCK_IN");
+        timeClockStamperController.stampInOrOut();
+        assertThat(timeClockStamperController.currentStampState()).isEqualTo("CLOCK_OUT");
+        timeClockStamperController.stampInOrOut();
+        assertThat(timeClockStamperController.currentStampState()).isEqualTo("CLOCK_IN");
     }
 
     private String createFileName() {

@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class ClockInAndOutService {
+public class TimeClockStamperService {
 
     private static final int EIGHT_HOURS_IN_MINUTES = 480;
     private final ClockTimePersistencePort clockTimePersistencePort;
@@ -26,11 +26,11 @@ public class ClockInAndOutService {
     private Integer defaultPause;
 
     @Autowired
-    public ClockInAndOutService(ClockTimePersistencePort clockTimePersistencePort) {
+    public TimeClockStamperService(ClockTimePersistencePort clockTimePersistencePort) {
         this.clockTimePersistencePort = clockTimePersistencePort;
     }
 
-    public String clockInOrOut() {
+    public String stampInOrOut() {
         ClockTime clockTime = clockNow();
         List<ClockTime> clockTimeDb = new ArrayList<>(clockTimePersistencePort.read());
         clockTimeDb.add(clockTime);
@@ -38,7 +38,7 @@ public class ClockInAndOutService {
         return getCurrentClockType().name() + clockTime;
     }
 
-    public String currentClockState() {
+    public String currentStampState() {
         return getCurrentClockType().toString();
     }
 
