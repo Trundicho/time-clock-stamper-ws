@@ -1,4 +1,4 @@
-package de.trundicho.timeclockinandout.application;
+package de.trundicho.timeclockstamper.application;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package de.trundicho.timeclockinandout;
+package de.trundicho.timeclockstamper;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ class ArchitectureTest {
 
     @Test
     void testPortsAndAdaptersArchitecture() {
-        String basePackage = "de.trundicho.timeclockinandout";
+        String basePackage = "de.trundicho.timeclockstamper";
         JavaClasses jc = new ClassFileImporter()
                 .importPackages(basePackage);
         Architectures.OnionArchitecture arch = onionArchitecture()

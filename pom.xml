@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.trundicho</groupId>
-	<artifactId>timeclockinandout</artifactId>
+	<artifactId>time-clock-stamper-ws</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>timeclockinandout</name>
+	<name>time-clock-stamper-ws</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

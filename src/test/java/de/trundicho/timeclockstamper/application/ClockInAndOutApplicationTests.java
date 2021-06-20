@@ -1,4 +1,4 @@
-package de.trundicho.timeclockinandout.application;
+package de.trundicho.timeclockstamper.application;
 
 import java.io.File;
 import java.io.IOException;

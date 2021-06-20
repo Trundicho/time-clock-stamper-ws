@@ -1,4 +1,4 @@
-package de.trundicho.timeclockinandout.domain.model;
+package de.trundicho.timeclockstamper.domain.model;
 
 import java.time.LocalDateTime;
 

@@ -1,11 +1,11 @@
-package de.trundicho.timeclockinandout.application;
+package de.trundicho.timeclockstamper.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan("de.trundicho.timeclockinandout")
+@ComponentScan("de.trundicho.timeclockstamper")
 public class ClockInAndOutApplication {
 
 	public static void main(String[] args) {

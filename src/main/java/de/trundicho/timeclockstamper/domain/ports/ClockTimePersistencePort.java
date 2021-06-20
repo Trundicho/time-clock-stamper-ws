@@ -1,8 +1,8 @@
-package de.trundicho.timeclockinandout.domain.ports;
+package de.trundicho.timeclockstamper.domain.ports;
 
 import java.util.List;
 
-import de.trundicho.timeclockinandout.domain.model.ClockTime;
+import de.trundicho.timeclockstamper.domain.model.ClockTime;
 
 public interface ClockTimePersistencePort {
 

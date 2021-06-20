@@ -1,10 +1,9 @@
-package de.trundicho.timeclockinandout.adapters.persistence;
+package de.trundicho.timeclockstamper.adapters.persistence;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import de.trundicho.timeclockinandout.domain.model.ClockTime;
-import de.trundicho.timeclockinandout.domain.ports.ClockTimePersistencePort;
+import de.trundicho.timeclockstamper.domain.model.ClockTime;
+import de.trundicho.timeclockstamper.domain.ports.ClockTimePersistencePort;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

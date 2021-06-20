@@ -1,4 +1,4 @@
-package de.trundicho.timeclockinandout.service;
+package de.trundicho.timeclockstamper.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import de.trundicho.timeclockinandout.domain.model.ClockTime;
-import de.trundicho.timeclockinandout.domain.model.ClockType;
-import de.trundicho.timeclockinandout.domain.ports.ClockTimePersistencePort;
+import de.trundicho.timeclockstamper.domain.model.ClockTime;
+import de.trundicho.timeclockstamper.domain.model.ClockType;
+import de.trundicho.timeclockstamper.domain.ports.ClockTimePersistencePort;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +22,7 @@ public class ClockInAndOutService {
 
     private static final int EIGHT_HOURS_IN_MINUTES = 480;
     private final ClockTimePersistencePort clockTimePersistencePort;
-    @Value("${timeclockinandout.default.pause.in.minutes}")
+    @Value("${timeclockstamper.default.pause.in.minutes}")
     private Integer defaultPause;
 
     @Autowired

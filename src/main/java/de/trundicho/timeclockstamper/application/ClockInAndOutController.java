@@ -1,11 +1,11 @@
-package de.trundicho.timeclockinandout.application;
+package de.trundicho.timeclockstamper.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.trundicho.timeclockinandout.service.ClockInAndOutService;
+import de.trundicho.timeclockstamper.service.ClockInAndOutService;
 
 @RestController
 public class ClockInAndOutController {
