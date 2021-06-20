@@ -1,0 +1,21 @@
+package de.trundicho.timeclockinandout.domain.model;
+
+import java.time.LocalDateTime;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
+
+@Data
+@EqualsAndHashCode
+@ToString
+@Accessors(chain = true)
+public class ClockTime implements Comparable<LocalDateTime> {
+    private LocalDateTime date;
+
+    @Override
+    public int compareTo(LocalDateTime o) {
+        return this.date.compareTo(o);
+    }
+}
