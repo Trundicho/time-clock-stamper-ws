@@ -49,7 +49,7 @@ public class TimeClockStamperService {
             //add fake clockOut
             todayClockTimes.add(clockNow());
         } else if(!todayClockTimes.isEmpty()) {
-            overallWorkedMinutes = getOverallWorkedMinutesMinusPauseMinutes(todayClockTimes);
+            overallWorkedMinutes = getOverallMinusPauseMinutesIfOnlyOneStampIn(todayClockTimes);
         }
         return "Worked today: " + toHoursAndMinutes(overallWorkedMinutes) + ". Left to 8 hours: " + toHoursAndMinutes(
                 EIGHT_HOURS_IN_MINUTES - overallWorkedMinutes);
@@ -72,14 +72,14 @@ public class TimeClockStamperService {
             if (clocksAtDay.isEmpty()) {
                 overallWorkedMinutes += EIGHT_HOURS_IN_MINUTES;
             } else {
-                overallWorkedMinutes += getOverallWorkedMinutesMinusPauseMinutes(clocksAtDay);
+                overallWorkedMinutes += getOverallMinusPauseMinutesIfOnlyOneStampIn(clocksAtDay);
             }
         }
         int minutesToWorkUntilToday = dayOfMonth * EIGHT_HOURS_IN_MINUTES;
         return "Overtime " + toHoursAndMinutes(overallWorkedMinutes - minutesToWorkUntilToday);
     }
 
-    private int getOverallWorkedMinutesMinusPauseMinutes(List<ClockTime> todayClockTimes) {
+    private int getOverallMinusPauseMinutesIfOnlyOneStampIn(List<ClockTime> todayClockTimes) {
         List<ClockTime> todayClocksReverse = new ArrayList<>(todayClockTimes);
         Collections.reverse(todayClocksReverse);
         if (todayClocksReverse.size() % 2 == 1) {
@@ -90,6 +90,7 @@ public class TimeClockStamperService {
             log.info("Not clocked on this day, assuming 8 hours of work");
             return EIGHT_HOURS_IN_MINUTES;
         }
+        boolean oneStampInAndOneStampOut = todayClockTimes.size() == 2;
         LocalDateTime lastClock = todayClocksReverse.get(0).getDate();
         int overallWorkedMinutes = 0;
         for (int i = 1; i < todayClocksReverse.size(); i++) {
@@ -105,7 +106,10 @@ public class TimeClockStamperService {
             int minutes2 = toMinutes(lastClock.getHour(), lastClock.getMinute());
             overallWorkedMinutes += minutes1 - minutes2;
         }
-        return overallWorkedMinutes - defaultPause;
+        if(oneStampInAndOneStampOut){
+            overallWorkedMinutes = overallWorkedMinutes - defaultPause;
+        }
+        return overallWorkedMinutes;
     }
 
     private ClockTime clockNow() {
