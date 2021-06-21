@@ -44,11 +44,13 @@ public class TimeClockStamperService {
 
     public String hoursWorkedToday() {
         List<ClockTime> todayClockTimes = getClocksOn(today());
+        int overallWorkedMinutes = 0;
         if (getCurrentClockType() == ClockType.CLOCK_IN) {
             //add fake clockOut
             todayClockTimes.add(clockNow());
+        } else if(!todayClockTimes.isEmpty()) {
+            overallWorkedMinutes = getOverallWorkedMinutesMinusPauseMinutes(todayClockTimes);
         }
-        int overallWorkedMinutes = getOverallWorkedMinutesMinusPauseMinutes(todayClockTimes);
         return "Worked today: " + toHoursAndMinutes(overallWorkedMinutes) + ". Left to 8 hours: " + toHoursAndMinutes(
                 EIGHT_HOURS_IN_MINUTES - overallWorkedMinutes);
     }
