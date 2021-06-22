@@ -40,11 +40,10 @@ public class TimeClockStamperService {
 
     public String currentStampState() {
         List<ClockTime> read = clockTimePersistencePort.read();
-        ClockTime clockTime = null;
         if (!read.isEmpty()) {
-            clockTime = read.get(read.size() - 1);
+            return getCurrentClockType().toString() + " Last: " + read.get(read.size() - 1);
         }
-        return getCurrentClockType().toString() + " Last: " + clockTime;
+        return getCurrentClockType().toString();
     }
 
     public String hoursWorkedToday() {
@@ -54,7 +53,7 @@ public class TimeClockStamperService {
             //add fake clockOut
             todayClockTimes.add(clockNow());
         }
-        if(!todayClockTimes.isEmpty()) {
+        if (!todayClockTimes.isEmpty()) {
             overallWorkedMinutes = getOverallMinusPauseMinutesIfOnlyOneStampIn(todayClockTimes);
         }
         return "Worked today: " + toHoursAndMinutes(overallWorkedMinutes) + ". Left to 8 hours: " + toHoursAndMinutes(
@@ -112,7 +111,7 @@ public class TimeClockStamperService {
             int minutes2 = toMinutes(lastClock.getHour(), lastClock.getMinute());
             overallWorkedMinutes += minutes1 - minutes2;
         }
-        if(oneStampInAndOneStampOut){
+        if (oneStampInAndOneStampOut) {
             overallWorkedMinutes = overallWorkedMinutes - defaultPause;
         }
         return overallWorkedMinutes;
