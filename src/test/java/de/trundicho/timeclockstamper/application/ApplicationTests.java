@@ -51,7 +51,7 @@ class ApplicationTests {
         ClockTime stamp1 = createClockTime(now, 9, 0);
         ClockTime stamp2 = createClockTime(now, 17, 0);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2));
-        assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("Worked today: 7h 30m. Left to 8 hours: 0h 30m");
+        assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
     }
 
     @Test
@@ -62,7 +62,7 @@ class ApplicationTests {
         ClockTime stamp3 = createClockTime(now, 13, 0);
         ClockTime stamp4 = createClockTime(now, 17, 0);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3, stamp4));
-        assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("Worked today: 7h 0m. Left to 8 hours: 1h 0m");
+        assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("7h 0m. Left to 8 hours: 1h 0m");
     }
 
     private ClockTime createClockTime(LocalDateTime now, int hour, int minute) {

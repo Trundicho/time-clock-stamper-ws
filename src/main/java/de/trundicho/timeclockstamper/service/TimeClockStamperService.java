@@ -56,7 +56,7 @@ public class TimeClockStamperService {
         if (!todayClockTimes.isEmpty()) {
             overallWorkedMinutes = getOverallMinusPauseMinutesIfOnlyOneStampIn(todayClockTimes);
         }
-        return "Worked today: " + toHoursAndMinutes(overallWorkedMinutes) + ". Left to 8 hours: " + toHoursAndMinutes(
+        return toHoursAndMinutes(overallWorkedMinutes) + ". Left to 8 hours: " + toHoursAndMinutes(
                 EIGHT_HOURS_IN_MINUTES - overallWorkedMinutes);
     }
 
@@ -81,7 +81,7 @@ public class TimeClockStamperService {
             }
         }
         int minutesToWorkUntilToday = dayOfMonth * EIGHT_HOURS_IN_MINUTES;
-        return "Overtime " + toHoursAndMinutes(overallWorkedMinutes - minutesToWorkUntilToday);
+        return toHoursAndMinutes(overallWorkedMinutes - minutesToWorkUntilToday);
     }
 
     private int getOverallMinusPauseMinutesIfOnlyOneStampIn(List<ClockTime> todayClockTimes) {
