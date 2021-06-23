@@ -8,6 +8,7 @@
 		<version>2.5.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	<packaging>war</packaging>
 	<groupId>de.trundicho</groupId>
 	<artifactId>time-clock-stamper-ws</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
