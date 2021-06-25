@@ -46,16 +46,17 @@ class ApplicationTests {
     }
 
     @Test
-    void whenStampingOnlyTwice_thenDefaultPauseIsSubstracted() throws IOException {
+    void whenPauseExists_thenItIsSubstracted() throws IOException {
         LocalDateTime now = LocalDateTime.now();
         ClockTime stamp1 = createClockTime(now, 9, 0);
         ClockTime stamp2 = createClockTime(now, 17, 0);
-        objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2));
+        ClockTime stamp3 = createClockTime(now, 17, 0).setPause(30);
+        objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3));
         assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
     }
 
     @Test
-    void whenMoreThanTwoStamping_thenDefaultPauseIsNOTSubstracted() throws IOException {
+    void whenMoreThanTwoStamping_thenGetHoursWorkedToday() throws IOException {
         LocalDateTime now = LocalDateTime.now();
         ClockTime stamp1 = createClockTime(now, 9, 0);
         ClockTime stamp2 = createClockTime(now, 12, 0);
