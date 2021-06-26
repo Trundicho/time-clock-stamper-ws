@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import de.trundicho.timeclockstamper.api.ClockType;
+import de.trundicho.timeclockstamper.api.ClockTimeResponse;
 import de.trundicho.timeclockstamper.domain.model.ClockTime;
-import de.trundicho.timeclockstamper.domain.model.ClockType;
 import de.trundicho.timeclockstamper.domain.ports.ClockTimePersistencePort;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,32 +31,32 @@ public class TimeClockStamperService {
         this.clockTimePersistencePort = clockTimePersistencePort;
     }
 
-    public String stampInOrOut() {
+    public ClockTimeResponse stampInOrOut() {
         return stamp(clockNow());
     }
 
-    public String addPause() {
+    public ClockTimeResponse getTimeClockResponse() {
+        List<ClockTime> clockTimes = clockTimePersistencePort.read();
+        return createClockTimeResponse(clockTimes);
+    }
+
+    private ClockTimeResponse createClockTimeResponse(List<ClockTime> clockTimes) {
+        return new ClockTimeResponse(ClockType.valueOf(currentStampState(clockTimes)), hoursWorkedToday(clockTimes),
+                overtimeMonth(clockTimes));
+    }
+
+    public ClockTimeResponse addPause() {
         return stamp(clockNowWithPause(defaultPause));
     }
 
-    public String currentStampState() {
-        List<ClockTime> read = clockTimePersistencePort.read();
-        if (!read.isEmpty()) {
-            ClockTime clockTime = getLastClockTime(read);
-            return getCurrentClockType().toString() + " Last: " + clockTime;
-        }
-        return getCurrentClockType().toString();
+    private String currentStampState(List<ClockTime> clockTimes) {
+        return getCurrentClockType(clockTimes).toString();
     }
 
-    private ClockTime getLastClockTime(List<ClockTime> clockTimes) {
-        List<ClockTime> clockTimesWithoutPause = clockTimes.stream().filter(c -> c.getPause() == null).collect(Collectors.toList());
-        return clockTimesWithoutPause.get(clockTimesWithoutPause.size() - 1);
-    }
-
-    public String hoursWorkedToday() {
+    private String hoursWorkedToday(List<ClockTime> clockTimes) {
         List<ClockTime> todayClockTimes = getClocksAndPausesOn(today());
         int overallWorkedMinutes = 0;
-        if (getCurrentClockType() == ClockType.CLOCK_IN) {
+        if (getCurrentClockType(clockTimes) == ClockType.CLOCK_IN) {
             //add fake clockOut
             todayClockTimes.add(clockNow());
         }
@@ -66,10 +67,10 @@ public class TimeClockStamperService {
                 EIGHT_HOURS_IN_MINUTES - overallWorkedMinutes);
     }
 
-    public String overtimeMonth() {
-        List<ClockTime> allClocksThisMonth = clockTimePersistencePort.read();
+    private String overtimeMonth(List<ClockTime> clockTimes) {
+        List<ClockTime> allClocksThisMonth = new ArrayList<>(clockTimes);
         ClockTime now = clockNow();
-        if (getCurrentClockType() == ClockType.CLOCK_IN) {
+        if (getCurrentClockType(clockTimes) == ClockType.CLOCK_IN) {
             //add fake clockOut
             allClocksThisMonth.add(now);
         }
@@ -133,12 +134,9 @@ public class TimeClockStamperService {
         return new ClockTime().setDate(LocalDateTime.now());
     }
 
-    private ClockType getCurrentClockType() {
-        List<ClockTime> clockTimes = clockTimePersistencePort.read()
-                                                             .stream()
-                                                             .filter(c -> c.getPause() == null)
-                                                             .collect(Collectors.toList());
-        if (clockTimes.size() % 2 == 0) {
+    private ClockType getCurrentClockType(List<ClockTime> clockTimes) {
+        List<ClockTime> clockTimesWithoutPause = clockTimes.stream().filter(c -> c.getPause() == null).collect(Collectors.toList());
+        if (clockTimesWithoutPause.size() % 2 == 0) {
             return ClockType.CLOCK_OUT;
         }
         return ClockType.CLOCK_IN;
@@ -161,10 +159,10 @@ public class TimeClockStamperService {
         return new ArrayList<>(clockTimePersistencePort.read().stream().filter(c -> c.getDate().isAfter(day)).collect(Collectors.toList()));
     }
 
-    private String stamp(ClockTime clockTime) {
+    private ClockTimeResponse stamp(ClockTime clockTime) {
         List<ClockTime> clockTimeDb = new ArrayList<>(clockTimePersistencePort.read());
         clockTimeDb.add(clockTime);
         clockTimePersistencePort.write(clockTimeDb);
-        return getCurrentClockType().name() + clockTime;
+        return createClockTimeResponse(clockTimeDb);
     }
 }

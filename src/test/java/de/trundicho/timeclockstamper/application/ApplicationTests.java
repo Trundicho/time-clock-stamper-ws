@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import de.trundicho.timeclockstamper.api.ClockType;
+import de.trundicho.timeclockstamper.api.ClockTimeResponse;
 import de.trundicho.timeclockstamper.domain.model.ClockTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,13 +38,10 @@ class ApplicationTests {
 
     @Test
     void whenClockingInOrOut_thenStateChanges() {
-        assertThat(timeClockStamperController.currentStampState()).isEqualTo("CLOCK_OUT");
-        timeClockStamperController.stampInOrOut();
-        assertThat(timeClockStamperController.currentStampState()).startsWith("CLOCK_IN Last:");
-        timeClockStamperController.stampInOrOut();
-        assertThat(timeClockStamperController.currentStampState()).startsWith("CLOCK_OUT Last:");
-        timeClockStamperController.stampInOrOut();
-        assertThat(timeClockStamperController.currentStampState()).startsWith("CLOCK_IN Last:");
+        assertThat(timeClockStamperController.getState().getCurrentState()).isEqualTo(ClockType.CLOCK_OUT);
+        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockType.CLOCK_IN);
+        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockType.CLOCK_OUT);
+        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockType.CLOCK_IN);
     }
 
     @Test
@@ -52,7 +51,8 @@ class ApplicationTests {
         ClockTime stamp2 = createClockTime(now, 17, 0);
         ClockTime stamp3 = createClockTime(now, 17, 0).setPause(30);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3));
-        assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
+        ClockTimeResponse clockTimeResponse = timeClockStamperController.getState();
+        assertThat(clockTimeResponse.getHoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
     }
 
     @Test
@@ -63,7 +63,8 @@ class ApplicationTests {
         ClockTime stamp3 = createClockTime(now, 13, 0);
         ClockTime stamp4 = createClockTime(now, 17, 0);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3, stamp4));
-        assertThat(timeClockStamperController.hoursWorkedToday()).isEqualTo("7h 0m. Left to 8 hours: 1h 0m");
+        ClockTimeResponse clockTimeResponse = timeClockStamperController.getState();
+        assertThat(clockTimeResponse.getHoursWorkedToday()).isEqualTo("7h 0m. Left to 8 hours: 1h 0m");
     }
 
     private ClockTime createClockTime(LocalDateTime now, int hour, int minute) {
