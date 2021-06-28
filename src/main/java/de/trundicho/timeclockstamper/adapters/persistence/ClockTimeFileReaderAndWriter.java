@@ -26,6 +26,8 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
 
     @Value("${persistence.file}")
     private String persistenceFile;
+    @Value("${persistence.folder}")
+    private String persistenceFolder;
 
     @Autowired
     public ClockTimeFileReaderAndWriter(ObjectMapper objectMapper) {
@@ -43,7 +45,7 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
 
     private String createFileName() {
         Month currentMonth = getCurrentMonth();
-        return currentMonth + "-" + persistenceFile;
+        return persistenceFolder + currentMonth + "-" + persistenceFile;
     }
 
     private Month getCurrentMonth() {
@@ -53,7 +55,8 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
 
     public List<ClockTime> read() {
         try {
-            return objectMapper.readValue(new File(createFileName()), new TypeReference<>() {
+            File src = new File(createFileName());
+            return objectMapper.readValue(src, new TypeReference<>() {
 
             });
         } catch (IOException e) {
