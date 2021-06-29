@@ -20,7 +20,7 @@ Configuration parameters can be adjusted in the application.properties
 Go to project folder
 
 ### Login to docker
-docker login
+docker login -u <username>
 
 ### Build docker image
 docker build -t time-clock-stamper-ws:1.1 .

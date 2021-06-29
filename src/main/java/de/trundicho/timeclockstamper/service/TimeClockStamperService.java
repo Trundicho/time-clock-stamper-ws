@@ -1,6 +1,7 @@
 package de.trundicho.timeclockstamper.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import de.trundicho.timeclockstamper.api.ClockType;
 import de.trundicho.timeclockstamper.api.ClockTimeResponse;
+import de.trundicho.timeclockstamper.api.ClockType;
 import de.trundicho.timeclockstamper.domain.model.ClockTime;
 import de.trundicho.timeclockstamper.domain.ports.ClockTimePersistencePort;
 
@@ -25,6 +26,8 @@ public class TimeClockStamperService {
     private final ClockTimePersistencePort clockTimePersistencePort;
     @Value("${timeclockstamper.default.pause.in.minutes}")
     private Integer defaultPause;
+    @Value("${time.zone}")
+    private String timezone;
 
     @Autowired
     public TimeClockStamperService(ClockTimePersistencePort clockTimePersistencePort) {
@@ -131,7 +134,11 @@ public class TimeClockStamperService {
     }
 
     private ClockTime clockNow() {
-        return new ClockTime().setDate(LocalDateTime.now());
+        return new ClockTime().setDate(getLocalDateTime());
+    }
+
+    private LocalDateTime getLocalDateTime() {
+        return LocalDateTime.now(ZoneId.of(timezone));
     }
 
     private ClockType getCurrentClockType(List<ClockTime> clockTimes) {
@@ -151,7 +158,7 @@ public class TimeClockStamperService {
     }
 
     private LocalDateTime today() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = getLocalDateTime();
         return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
     }
 

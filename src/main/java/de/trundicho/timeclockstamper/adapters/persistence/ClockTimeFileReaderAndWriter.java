@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     private String persistenceFile;
     @Value("${persistence.folder}")
     private String persistenceFolder;
+    @Value("${time.zone}")
+    private String timezone;
 
     @Autowired
     public ClockTimeFileReaderAndWriter(ObjectMapper objectMapper) {
@@ -36,8 +39,7 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
 
     public void write(List<ClockTime> clockTimes) {
         try {
-            objectMapper
-                    .writerWithDefaultPrettyPrinter().writeValue(new File(createFileName()), clockTimes);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(createFileName()), clockTimes);
         } catch (IOException e) {
             log.error("Can not write to file " + e.getMessage());
         }
@@ -49,8 +51,7 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     }
 
     private Month getCurrentMonth() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.getMonth();
+        return LocalDateTime.now(ZoneId.of(timezone)).getMonth();
     }
 
     public List<ClockTime> read() {
