@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,19 @@ public class TimeClockStamperService {
 
     public ClockTimeResponse getTimeClockResponse() {
         List<ClockTime> clockTimes = clockTimePersistencePort.read();
-        return createClockTimeResponse(clockTimes);
+        return createClockTimeResponse(clockTimes, null, null);
     }
 
-    private ClockTimeResponse createClockTimeResponse(List<ClockTime> clockTimes) {
-        return new ClockTimeResponse(ClockType.valueOf(currentStampState(clockTimes)), hoursWorkedToday(clockTimes),
-                overtimeMonth(clockTimes));
+    public String getOvertimeMonth(Integer year, Integer month) {
+        List<ClockTime> clockTimes = clockTimePersistencePort.read();
+        return overtimeMonth(clockTimes, year, month);
+    }
+
+    private ClockTimeResponse createClockTimeResponse(List<ClockTime> clockTimes, Integer year, Integer month) {
+        ClockType clockType = month == null ? ClockType.valueOf(currentStampState(clockTimes)) : null;
+        String hoursWorkedToday = month == null ? hoursWorkedToday(clockTimes) : null;
+        return new ClockTimeResponse(clockType, hoursWorkedToday,
+                overtimeMonth(clockTimes, year, month));
     }
 
     public ClockTimeResponse addPause() {
@@ -70,14 +78,24 @@ public class TimeClockStamperService {
                 EIGHT_HOURS_IN_MINUTES - overallWorkedMinutes);
     }
 
-    private String overtimeMonth(List<ClockTime> clockTimes) {
-        List<ClockTime> allClocksThisMonth = new ArrayList<>(clockTimes);
-        ClockTime now = clockNow();
-        if (getCurrentClockType(clockTimes) == ClockType.CLOCK_IN) {
+    private String overtimeMonth(List<ClockTime> clockTimes, Integer year, Integer month) {
+        final ClockTime now;
+        if(year != null && month != null){
+            LocalDateTime monthDate = LocalDateTime.of(year, month, 1, 0, 0);
+            now = new ClockTime().setDate(monthDate);
+        } else {
+            now = clockNow();
+        }
+        final int monthInteger = Objects.requireNonNullElseGet(month, () -> now.getDate().getMonthValue());
+        List<ClockTime> allClocksThisMonth = new ArrayList<>(clockTimes).stream()
+                                                                        .filter(clockTime -> clockTime.getDate().getMonthValue()
+                                                                                == monthInteger)
+                                                                        .collect(Collectors.toList());
+        if (month == null && getCurrentClockType(clockTimes) == ClockType.CLOCK_IN) {
             //add fake clockOut
             allClocksThisMonth.add(now);
         }
-        int dayOfMonth = now.getDate().getDayOfMonth();
+        int dayOfMonth = month == null ? now.getDate().getDayOfMonth() : 31;
         int overallWorkedMinutes = 0;
         for (int i = 1; i <= dayOfMonth; i++) {
             final int dom = i;
@@ -170,6 +188,6 @@ public class TimeClockStamperService {
         List<ClockTime> clockTimeDb = new ArrayList<>(clockTimePersistencePort.read());
         clockTimeDb.add(clockTime);
         clockTimePersistencePort.write(clockTimeDb);
-        return createClockTimeResponse(clockTimeDb);
+        return createClockTimeResponse(clockTimeDb, null, null);
     }
 }

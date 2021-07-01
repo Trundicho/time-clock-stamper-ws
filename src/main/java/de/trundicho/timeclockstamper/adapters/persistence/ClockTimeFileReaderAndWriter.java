@@ -1,12 +1,15 @@
 package de.trundicho.timeclockstamper.adapters.persistence;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,14 +58,20 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     }
 
     public List<ClockTime> read() {
+        List<ClockTime> clockTimes = new ArrayList<>();
         try {
-            File src = new File(createFileName());
-            return objectMapper.readValue(src, new TypeReference<>() {
+            File folder = new File(persistenceFolder);
+            File[] files = folder.listFiles(pathname -> pathname.toString().endsWith(persistenceFile));
+            for (File file : Objects.requireNonNull(files)) {
+                clockTimes.addAll(objectMapper.readValue(file, new TypeReference<>() {
 
-            });
+                }));
+            }
+
+
         } catch (IOException e) {
             log.error("Can not read from file " + e.getMessage());
         }
-        return Collections.emptyList();
+        return clockTimes;
     }
 }
