@@ -11,12 +11,12 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @ToString
 @Accessors(chain = true)
-public class ClockTime implements Comparable<LocalDateTime> {
+public class ClockTime implements Comparable<ClockTime> {
     private LocalDateTime date;
     private Integer pause;
 
     @Override
-    public int compareTo(LocalDateTime o) {
-        return this.date.compareTo(o);
+    public int compareTo(ClockTime o) {
+        return this.date.compareTo(o.date);
     }
 }

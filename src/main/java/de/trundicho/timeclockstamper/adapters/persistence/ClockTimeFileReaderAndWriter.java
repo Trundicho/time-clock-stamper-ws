@@ -1,7 +1,6 @@
 package de.trundicho.timeclockstamper.adapters.persistence;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,8 +41,13 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     }
 
     public void write(List<ClockTime> clockTimes) {
+        Month currentMonth = getCurrentMonth();
+        List<ClockTime> clockTimesOfCurrentMonth = clockTimes.stream()
+                                                          .filter(c -> currentMonth.equals(c.getDate().getMonth()))
+                                                          .sorted()
+                                                          .collect(Collectors.toList());
         try {
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(createFileName()), clockTimes);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(createFileName()), clockTimesOfCurrentMonth);
         } catch (IOException e) {
             log.error("Can not write to file " + e.getMessage());
         }
@@ -67,7 +72,6 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
 
                 }));
             }
-
 
         } catch (IOException e) {
             log.error("Can not read from file " + e.getMessage());
