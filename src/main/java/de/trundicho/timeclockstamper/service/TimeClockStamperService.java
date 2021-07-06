@@ -1,6 +1,7 @@
 package de.trundicho.timeclockstamper.service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,8 +53,7 @@ public class TimeClockStamperService {
     private ClockTimeResponse createClockTimeResponse(List<ClockTime> clockTimes, Integer year, Integer month) {
         ClockType clockType = month == null ? ClockType.valueOf(currentStampState(clockTimes)) : null;
         String hoursWorkedToday = month == null ? hoursWorkedToday(clockTimes) : null;
-        return new ClockTimeResponse(clockType, hoursWorkedToday,
-                overtimeMonth(clockTimes, year, month));
+        return new ClockTimeResponse(clockType, hoursWorkedToday, overtimeMonth(clockTimes, year, month));
     }
 
     public ClockTimeResponse addPause() {
@@ -80,7 +80,7 @@ public class TimeClockStamperService {
 
     private String overtimeMonth(List<ClockTime> clockTimes, Integer year, Integer month) {
         final ClockTime now;
-        if(year != null && month != null){
+        if (year != null && month != null) {
             LocalDateTime monthDate = LocalDateTime.of(year, month, 1, 0, 0);
             now = new ClockTime().setDate(monthDate);
         } else {
@@ -182,6 +182,14 @@ public class TimeClockStamperService {
 
     private List<ClockTime> getClocksAndPausesOn(LocalDateTime day) {
         return new ArrayList<>(clockTimePersistencePort.read().stream().filter(c -> c.getDate().isAfter(day)).collect(Collectors.toList()));
+    }
+
+    public ClockTimeResponse stamp(LocalTime time) {
+        ClockTime clockTime = clockNow();
+        LocalDateTime date = clockTime.getDate();
+        LocalDateTime of = LocalDateTime.of(date.getYear(), date.getMonth(), date.getDayOfMonth(), time.getHour(), time.getMinute(),
+                time.getSecond());
+        return stamp(new ClockTime().setDate(of));
     }
 
     private ClockTimeResponse stamp(ClockTime clockTime) {
