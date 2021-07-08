@@ -53,7 +53,7 @@ public class TimeClockStamperService {
     private ClockTimeResponse createClockTimeResponse(List<ClockTime> clockTimes, Integer year, Integer month) {
         ClockType clockType = month == null ? ClockType.valueOf(currentStampState(clockTimes)) : null;
         String hoursWorkedToday = month == null ? hoursWorkedToday(clockTimes) : null;
-        return new ClockTimeResponse(clockType, hoursWorkedToday, overtimeMonth(clockTimes, year, month));
+        return new ClockTimeResponse(clockType, hoursWorkedToday, overtimeMonth(clockTimes, year, month), getClocksAndPausesOn(today()));
     }
 
     public ClockTimeResponse addPause() {
