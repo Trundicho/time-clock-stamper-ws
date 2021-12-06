@@ -72,13 +72,10 @@ class ApplicationTests {
     }
 
     private String createFileName() {
-        Month currentMonth = getCurrentMonth();
-        return currentMonth + "-" + persistenceFile;
-    }
-
-    private Month getCurrentMonth() {
         LocalDateTime now = LocalDateTime.now();
-        return now.getMonth();
+        Month currentMonth = now.getMonth();
+        int year = now.getYear();
+        return year + "-" + currentMonth + "-" + persistenceFile;
     }
 
 }

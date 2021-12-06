@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,11 +40,12 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     }
 
     public void write(List<ClockTime> clockTimes) {
-        Month currentMonth = getCurrentMonth();
+        LocalDateTime currentDate = getCurrentDate();
         List<ClockTime> clockTimesOfCurrentMonth = clockTimes.stream()
-                                                          .filter(c -> currentMonth.equals(c.getDate().getMonth()))
-                                                          .sorted()
-                                                          .collect(Collectors.toList());
+                                                             .filter(c -> currentDate.getMonth().equals(c.getDate().getMonth())
+                                                                     && currentDate.getYear() == c.getDate().getYear())
+                                                             .sorted()
+                                                             .collect(Collectors.toList());
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(createFileName()), clockTimesOfCurrentMonth);
         } catch (IOException e) {
@@ -54,12 +54,14 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     }
 
     private String createFileName() {
-        Month currentMonth = getCurrentMonth();
-        return persistenceFolder + currentMonth + "-" + persistenceFile;
+        LocalDateTime currentDate = getCurrentDate();
+        Month currentMonth = currentDate.getMonth();
+        int currentYear = currentDate.getYear();
+        return persistenceFolder + currentYear + "-" + currentMonth + "-" + persistenceFile;
     }
 
-    private Month getCurrentMonth() {
-        return LocalDateTime.now(ZoneId.of(timezone)).getMonth();
+    private LocalDateTime getCurrentDate() {
+        return LocalDateTime.now(ZoneId.of(timezone));
     }
 
     public List<ClockTime> read() {
