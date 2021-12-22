@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @ToString
 @Accessors(chain = true)
 @AllArgsConstructor
-public class ClockTimeResponse {
+public class ClockTimeDto {
 
     private final ClockType currentState;
     private final String hoursWorkedToday;
