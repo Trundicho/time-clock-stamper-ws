@@ -73,9 +73,10 @@ class ApplicationTests {
 
     private String createFileName() {
         LocalDateTime now = LocalDateTime.now();
-        Month currentMonth = now.getMonth();
+        int currentMonth = now.getMonthValue();
+        String month = currentMonth < 10 ? "0" + currentMonth : "" + currentMonth;
         int year = now.getYear();
-        return year + "-" + currentMonth + "-" + persistenceFile;
+        return year + "-" + month + "-" + persistenceFile;
     }
 
 }

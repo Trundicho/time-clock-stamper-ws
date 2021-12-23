@@ -56,8 +56,9 @@ public class ClockTimeFileReaderAndWriter implements ClockTimePersistencePort {
     private String createFileName() {
         LocalDateTime currentDate = getCurrentDate();
         int currentMonth = currentDate.getMonthValue();
+        String month = currentMonth < 10 ? "0" + currentMonth : "" + currentMonth;
         int currentYear = currentDate.getYear();
-        return persistenceFolder + currentYear + "-" + currentMonth + "-" + persistenceFile;
+        return persistenceFolder + currentYear + "-" + month + "-" + persistenceFile;
     }
 
     private LocalDateTime getCurrentDate() {
