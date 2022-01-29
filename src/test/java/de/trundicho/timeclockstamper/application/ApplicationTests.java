@@ -3,7 +3,6 @@ package de.trundicho.timeclockstamper.application;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import de.trundicho.timeclockstamper.api.ClockType;
-import de.trundicho.timeclockstamper.api.ClockTimeDto;
-import de.trundicho.timeclockstamper.domain.model.ClockTime;
+import de.trundicho.timeclockstamper.core.api.ClockType;
+import de.trundicho.timeclockstamper.core.api.ClockTimeDto;
+import de.trundicho.timeclockstamper.core.domain.model.ClockTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
