@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import de.trundicho.timeclockstamper.core.api.ClockType;
-import de.trundicho.timeclockstamper.core.api.ClockTimeDto;
+import de.trundicho.timeclockstamper.core.adapters.api.ClockTimeDataDto;
+import de.trundicho.timeclockstamper.core.adapters.api.ClockType;
 import de.trundicho.timeclockstamper.core.domain.model.ClockTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,8 +50,8 @@ class ApplicationTests {
         ClockTime stamp2 = createClockTime(now, 17, 0);
         ClockTime stamp3 = createClockTime(now, 17, 0).setPause(30);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3));
-        ClockTimeDto clockTimeDto = timeClockStamperController.getState();
-        assertThat(clockTimeDto.getHoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
+        ClockTimeDataDto ClockTimeDataDto = timeClockStamperController.getState();
+        assertThat(ClockTimeDataDto.getHoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
     }
 
     @Test
@@ -62,8 +62,8 @@ class ApplicationTests {
         ClockTime stamp3 = createClockTime(now, 13, 0);
         ClockTime stamp4 = createClockTime(now, 17, 0);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3, stamp4));
-        ClockTimeDto clockTimeDto = timeClockStamperController.getState();
-        assertThat(clockTimeDto.getHoursWorkedToday()).isEqualTo("7h 0m. Left to 8 hours: 1h 0m");
+        ClockTimeDataDto ClockTimeDataDto = timeClockStamperController.getState();
+        assertThat(ClockTimeDataDto.getHoursWorkedToday()).isEqualTo("7h 0m. Left to 8 hours: 1h 0m");
     }
 
     private ClockTime createClockTime(LocalDateTime now, int hour, int minute) {

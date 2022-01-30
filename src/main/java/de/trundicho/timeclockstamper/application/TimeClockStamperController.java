@@ -9,39 +9,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.trundicho.timeclockstamper.core.adatpers.persistence.FilePersistence;
-import de.trundicho.timeclockstamper.core.api.ClockTimeDto;
-import de.trundicho.timeclockstamper.core.service.TimeClockStamperService;
+import de.trundicho.timeclockstamper.core.adapters.api.ClockTimeDataDto;
+import de.trundicho.timeclockstamper.core.adapters.api.TimeClockStamperApi;
+import de.trundicho.timeclockstamper.core.adapters.persistence.FilePersistence;
 
 @RestController
 @RequestMapping(value = "stamp")
 public class TimeClockStamperController {
 
-    private final TimeClockStamperService timeClockStamperService;
+    private final TimeClockStamperApi timeClockStamperService;
 
     public TimeClockStamperController(@Value("${time.zone}") String timeZone, @Value("${persistence.folder}") String persistenceFolder,
             @Value("${persistence.file}") String persistenceFile) {
-        this.timeClockStamperService = new TimeClockStamperService(timeZone,
-                new FilePersistence(persistenceFolder, persistenceFile, timeZone));
+        this.timeClockStamperService = new TimeClockStamperApi(timeZone, new FilePersistence(persistenceFolder, persistenceFile, timeZone));
     }
 
     @RequestMapping(value = "inOrOut", method = RequestMethod.POST, produces = "application/json")
-    public ClockTimeDto stampInOrOut() {
+    public ClockTimeDataDto stampInOrOut() {
         return timeClockStamperService.stampInOrOut();
     }
 
     @RequestMapping(value = "today", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public ClockTimeDto today(@RequestBody ClockTimeDto clockTimeDto) {
-        return timeClockStamperService.setToday(clockTimeDto);
+    public ClockTimeDataDto today(@RequestBody ClockTimeDataDto ClockTimeDataDto) {
+        return timeClockStamperService.setToday(ClockTimeDataDto);
     }
 
     @RequestMapping(value = "time", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public ClockTimeDto time(@RequestBody LocalTime time) {
+    public ClockTimeDataDto time(@RequestBody LocalTime time) {
         return timeClockStamperService.stamp(time);
     }
 
     @RequestMapping(value = "state", method = RequestMethod.GET, produces = "application/json")
-    public ClockTimeDto getState() {
+    public ClockTimeDataDto getState() {
         return timeClockStamperService.getTimeClockResponse();
     }
 
