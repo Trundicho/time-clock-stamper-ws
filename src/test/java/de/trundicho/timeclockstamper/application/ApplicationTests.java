@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import de.trundicho.timeclockstamper.core.adapters.api.ClockTimeDataDto;
-import de.trundicho.timeclockstamper.core.adapters.api.ClockType;
-import de.trundicho.timeclockstamper.core.domain.model.ClockTime;
+import de.trundicho.timeclockstamper.core.adapters.api.ClockTimeDto;
+import de.trundicho.timeclockstamper.core.adapters.api.ClockTypeDto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,18 +37,18 @@ class ApplicationTests {
 
     @Test
     void whenClockingInOrOut_thenStateChanges() {
-        assertThat(timeClockStamperController.getState().getCurrentState()).isEqualTo(ClockType.CLOCK_OUT);
-        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockType.CLOCK_IN);
-        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockType.CLOCK_OUT);
-        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockType.CLOCK_IN);
+        assertThat(timeClockStamperController.getState().getCurrentState()).isEqualTo(ClockTypeDto.CLOCK_OUT);
+        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockTypeDto.CLOCK_IN);
+        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockTypeDto.CLOCK_OUT);
+        assertThat(timeClockStamperController.stampInOrOut().getCurrentState()).isEqualTo(ClockTypeDto.CLOCK_IN);
     }
 
     @Test
     void whenPauseExists_thenItIsSubstracted() throws IOException {
         LocalDateTime now = LocalDateTime.now();
-        ClockTime stamp1 = createClockTime(now, 9, 0);
-        ClockTime stamp2 = createClockTime(now, 17, 0);
-        ClockTime stamp3 = createClockTime(now, 17, 0).setPause(30);
+        ClockTimeDto stamp1 = createClockTime(now, 9, 0);
+        ClockTimeDto stamp2 = createClockTime(now, 17, 0);
+        ClockTimeDto stamp3 = createClockTime(now, 17, 0).setPause(30);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3));
         ClockTimeDataDto ClockTimeDataDto = timeClockStamperController.getState();
         assertThat(ClockTimeDataDto.getHoursWorkedToday()).isEqualTo("7h 30m. Left to 8 hours: 0h 30m");
@@ -57,17 +57,17 @@ class ApplicationTests {
     @Test
     void whenMoreThanTwoStamping_thenGetHoursWorkedToday() throws IOException {
         LocalDateTime now = LocalDateTime.now();
-        ClockTime stamp1 = createClockTime(now, 9, 0);
-        ClockTime stamp2 = createClockTime(now, 12, 0);
-        ClockTime stamp3 = createClockTime(now, 13, 0);
-        ClockTime stamp4 = createClockTime(now, 17, 0);
+        ClockTimeDto stamp1 = createClockTime(now, 9, 0);
+        ClockTimeDto stamp2 = createClockTime(now, 12, 0);
+        ClockTimeDto stamp3 = createClockTime(now, 13, 0);
+        ClockTimeDto stamp4 = createClockTime(now, 17, 0);
         objectMapper.writeValue(new File(createFileName()), List.of(stamp1, stamp2, stamp3, stamp4));
         ClockTimeDataDto ClockTimeDataDto = timeClockStamperController.getState();
         assertThat(ClockTimeDataDto.getHoursWorkedToday()).isEqualTo("7h 0m. Left to 8 hours: 1h 0m");
     }
 
-    private ClockTime createClockTime(LocalDateTime now, int hour, int minute) {
-        return new ClockTime().setDate(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), hour, minute));
+    private ClockTimeDto createClockTime(LocalDateTime now, int hour, int minute) {
+        return new ClockTimeDto().setDate(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), hour, minute));
     }
 
     private String createFileName() {

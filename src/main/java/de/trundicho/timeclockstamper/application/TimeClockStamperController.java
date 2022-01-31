@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.trundicho.timeclockstamper.core.adapters.api.ClockTimeDataDto;
 import de.trundicho.timeclockstamper.core.adapters.api.TimeClockStamperApi;
+import de.trundicho.timeclockstamper.core.adapters.api.TimeClockStamperApiImpl;
 import de.trundicho.timeclockstamper.core.adapters.persistence.FilePersistence;
 
 @RestController
@@ -21,7 +22,8 @@ public class TimeClockStamperController {
 
     public TimeClockStamperController(@Value("${time.zone}") String timeZone, @Value("${persistence.folder}") String persistenceFolder,
             @Value("${persistence.file}") String persistenceFile) {
-        this.timeClockStamperService = new TimeClockStamperApi(timeZone, new FilePersistence(persistenceFolder, persistenceFile, timeZone));
+        this.timeClockStamperService = new TimeClockStamperApiImpl(timeZone, new FilePersistence(persistenceFolder, persistenceFile,
+                timeZone));
     }
 
     @RequestMapping(value = "inOrOut", method = RequestMethod.POST, produces = "application/json")

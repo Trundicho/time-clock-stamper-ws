@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.github.Trundicho</groupId>
 			<artifactId>time-clock-stamper-core</artifactId>
-			<version>1.0.10</version>
+			<version>1.0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
